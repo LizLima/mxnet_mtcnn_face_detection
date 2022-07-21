@@ -6,7 +6,7 @@ import math
 import cv2
 from multiprocessing import Pool
 from itertools import repeat
-from itertools import izip
+# from itertools import izip
 from helper import nms, adjust_input, generate_bbox, detect_first_stage_warpper
 
 class MtcnnDetector(object):
@@ -239,7 +239,7 @@ class MtcnnDetector(object):
         total_boxes = []
         for batch in sliced_index:
             local_boxes = self.Pool.map( detect_first_stage_warpper, \
-                    izip(repeat(img), self.PNets[:len(batch)], [scales[i] for i in batch], repeat(self.threshold[0])) )
+                    zip(repeat(img), self.PNets[:len(batch)], [scales[i] for i in batch], repeat(self.threshold[0])) )
             total_boxes.extend(local_boxes)
         
         # remove the Nones 
@@ -428,8 +428,8 @@ class MtcnnDetector(object):
         cov = np.matrix([[0.0, 0.0], [0.0, 0.0]])
 
         # compute the mean and cov
-        from_shape_points = from_shape.reshape(from_shape.shape[0]/2, 2)
-        to_shape_points = to_shape.reshape(to_shape.shape[0]/2, 2)
+        from_shape_points = from_shape.reshape(int(from_shape.shape[0]/2), 2)
+        to_shape_points = to_shape.reshape(int(to_shape.shape[0]/2), 2)
         mean_from = from_shape_points.mean(axis=0)
         mean_to = to_shape_points.mean(axis=0)
 
@@ -481,7 +481,8 @@ class MtcnnDetector(object):
         crop_imgs = []
         for p in points:
             shape  =[]
-            for k in range(len(p)/2):
+            num_item = int(len(p)/2)
+            for k in range(num_item):
                 shape.append(p[k])
                 shape.append(p[k+5])
 
@@ -496,7 +497,8 @@ class MtcnnDetector(object):
             from_points = []
             to_points = []
 
-            for i in range(len(shape)/2):
+            num_item_shape = int(len(shape)/2)
+            for i in range(num_item_shape):
                 x = (padding + mean_face_shape_x[i]) / (2 * padding + 1) * desired_size
                 y = (padding + mean_face_shape_y[i]) / (2 * padding + 1) * desired_size
                 to_points.append([x, y])

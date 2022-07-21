@@ -1,4 +1,5 @@
 # coding: utf-8
+from cv2 import circle
 import mxnet as mx
 from mtcnn_detector import MtcnnDetector
 import cv2
@@ -30,7 +31,8 @@ if results is not None:
 
     for p in points:
         for i in range(5):
-            cv2.circle(draw, (p[i], p[i + 5]), 1, (0, 0, 255), 2)
+            cv2.circle(draw, (int(p[i]), int(p[i + 5])), 1, (0, 0, 255), 2)
+     
 
     cv2.imshow("detection result", draw)
     cv2.waitKey(0)
